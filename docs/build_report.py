@@ -97,7 +97,7 @@ story += [
     Spacer(1, 6),
     Paragraph("<b>2nd Microservice:</b> Update Student Mobile Number or Password", subtitle_style),
     Spacer(1, 6),
-    Paragraph(f"<b>GitHub:</b> {GITHUB}", subtitle_style),
+    Paragraph(f'<b>GitHub:</b> <a href="{GITHUB}" color="black"><u>{GITHUB}</u></a>', subtitle_style),
     PageBreak(),
 ]
 
@@ -196,7 +196,7 @@ story += [Paragraph("Task 6: Update Microservice API Call (Postman)", task_style
 
 # ---------- Task 7 ----------
 story += [Paragraph("Task 7: Source Code on GitHub", task_style),
-          Paragraph(f"Repository: <b>{GITHUB}</b>", body_style),
+          Paragraph(f'Repository: <b><a href="{GITHUB}" color="black"><u>{GITHUB}</u></a></b>', body_style),
           Spacer(1, 8),
           Paragraph("The repository contains the three microservices (api-gateway, registration-service, "
                     "update-service) with their Dockerfiles, the Kubernetes YAML files in k8s/, "
