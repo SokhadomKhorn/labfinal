@@ -1,0 +1,62 @@
+# Pod 1: API Gateway + Registration Service (two containers, they talk over localhost)
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gateway-registration-pod
+  labels:
+    app: gateway-registration
+spec:
+  containers:
+    - name: api-gateway
+      image: api-gateway:1.0
+      imagePullPolicy: Never
+      ports:
+        - containerPort: 8080
+      env:
+        - name: PORT
+          value: "8080"
+        - name: REGISTRATION_SERVICE_URL
+          value: "http://localhost:5001"
+        - name: UPDATE_SERVICE_URL
+          value: "http://update-service:5002"
+
+    - name: registration-service
+      image: registration-service:1.0
+      imagePullPolicy: Never
+      ports:
+        - containerPort: 5001
+      env:
+        - name: PORT
+          value: "5001"
+        - name: MONGODB_DATABASE
+          value: "student_management"
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: MONGODB_URI
+---
+# Pod 2: Update Student Mobile / Password Service
+apiVersion: v1
+kind: Pod
+metadata:
+  name: update-pod
+  labels:
+    app: update
+spec:
+  containers:
+    - name: update-service
+      image: update-service:1.0
+      imagePullPolicy: Never
+      ports:
+        - containerPort: 5002
+      env:
+        - name: PORT
+          value: "5002"
+        - name: MONGODB_DATABASE
+          value: "student_management"
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: MONGODB_URI

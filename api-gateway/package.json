@@ -1,0 +1,15 @@
+{
+  "name": "api-gateway",
+  "version": "1.0.0",
+  "description": "Student Management System - API Gateway",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Khorn Sokhadom",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "http-proxy": "^1.18.1"
+  }
+}
