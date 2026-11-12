@@ -1,7 +1,6 @@
 """Builds docs/Khorn_Sokhadom_Lab_Final.pdf from the screenshots folder.
 
 Run from the project root:  python docs/build_report.py
-If screenshots/database.png exists it is added to Task 5 automatically.
 """
 from pathlib import Path
 
@@ -41,8 +40,25 @@ def shot(name):
     return SHOTS / f"Screenshot 2026-11-12 {name}.png"
 
 
-def figure(caption, path, max_h=None, max_upscale=1.6):
+def trim_white_right(path, right=None):
+    """Copy of the screenshot with the empty white area on the right removed (colours unchanged)."""
+    with PILImage.open(path) as im:
+        if right is None:
+            gray = im.convert("L").point(lambda v: 255 if v < 235 else 0)
+            box = gray.getbbox()
+            if not box:
+                return path
+            right = min(im.width, box[2] + 40)
+        out = Path(__file__).resolve().parent / ".build" / path.name
+        out.parent.mkdir(exist_ok=True)
+        im.crop((0, 0, right, im.height)).save(out)
+        return out
+
+
+def figure(caption, path, max_h=None, max_upscale=1.6, trim=False, crop_right=None):
     """Caption + original-colour screenshot, scaled to fit the page (never distorted)."""
+    if trim or crop_right:
+        path = trim_white_right(path, crop_right)
     with PILImage.open(path) as im:
         w_px, h_px = im.size
     w, h = w_px * 0.75, h_px * 0.75  # pixels -> points at 96 dpi
@@ -153,12 +169,15 @@ story += [Paragraph("Task 5: Registration Microservice API Call (Postman) and Da
           PageBreak(),
           figure("5.2  Get All Students - GET /api/students", shot("183121")),
           PageBreak(),
-          figure("5.3  Get Student By Id - GET /api/students/{id}", shot("183128"))]
-database = SHOTS / "database.png"
-if database.exists():
-    story += [PageBreak(),
-              figure("5.4  Database - student record stored in MongoDB (students collection)", database)]
-story += [PageBreak()]
+          figure("5.3  Get Student By Id - GET /api/students/{id}", shot("183128")),
+          PageBreak(),
+          figure("5.4  Database - MongoDB Atlas database student_management (collections)",
+                 shot("184613"), max_upscale=1.6),
+          figure("5.5  Database - student record in the students collection",
+                 shot("184609"), trim=True, max_upscale=1.3),
+          figure("5.6  Database - counters collection used to generate Student_id",
+                 shot("184620"), crop_right=420, max_upscale=1.3),
+          PageBreak()]
 
 # ---------- Task 6 ----------
 story += [Paragraph("Task 6: Update Microservice API Call (Postman)", task_style),
@@ -187,4 +206,4 @@ doc = SimpleDocTemplate(str(OUT), pagesize=A4, leftMargin=MARGIN, rightMargin=MA
                         topMargin=MARGIN, bottomMargin=MARGIN,
                         title="Student Management System - Khorn Sokhadom", author="Khorn Sokhadom")
 doc.build(story, onFirstPage=lambda c, d: None, onLaterPages=footer)
-print("Wrote", OUT, "| database screenshot included:", database.exists())
+print("Wrote", OUT)
