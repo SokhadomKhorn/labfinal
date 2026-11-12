@@ -6,7 +6,7 @@
 ## Architecture
 
 ```
-Postman ──► api-gateway-service (NodePort 30080)
+Postman ──► student-gateway-service (NodePort 30090)
               │
    ┌──────────┴──────── Pod 1: gateway-registration-pod ─────────┐
    │  api-gateway :8080  ──localhost──►  registration-service :5001 │
@@ -44,7 +44,7 @@ api-gateway/            server.js, Dockerfile
 registration-service/   server.js, db.js, student_schema.js, counter_schema.js, Dockerfile
 update-service/         server.js, db.js, student_schema.js, Dockerfile
 k8s/pods.yaml           2 Pods (Pod 1: gateway + registration, Pod 2: update)
-k8s/services.yaml       api-gateway-service (NodePort) + update-service (ClusterIP)
+k8s/services.yaml       student-gateway-service (NodePort) + update-service (ClusterIP)
 k8s/secret.example.yaml MongoDB secret template
 postman/                Postman collection
 ```
@@ -53,12 +53,15 @@ postman/                Postman collection
 
 1. Put your MongoDB connection string in a `.env` file in the project root (see `.env.example`). It is not committed.
 
-2. Start Minikube and build the images inside it:
+2. Start Minikube, build the images with Docker and load them into Minikube:
 ```powershell
 minikube start
-minikube image build -t api-gateway:1.0 ./api-gateway
-minikube image build -t registration-service:1.0 ./registration-service
-minikube image build -t update-service:1.0 ./update-service
+docker build -t api-gateway:1.0 ./api-gateway
+docker build -t registration-service:1.0 ./registration-service
+docker build -t update-service:1.0 ./update-service
+minikube image load api-gateway:1.0
+minikube image load registration-service:1.0
+minikube image load update-service:1.0
 ```
 
 3. Create the MongoDB secret and deploy:
@@ -72,7 +75,7 @@ kubectl get services
 
 4. Open the gateway for Postman:
 ```powershell
-kubectl port-forward service/api-gateway-service 9090:8080
+kubectl port-forward service/student-gateway-service 9090:8080
 ```
 
 5. Import `postman/Student_Management_System.postman_collection.json` into Postman and run the requests top to bottom. **Register Student** saves the new `Student_id`, and the **Update** requests use it.
