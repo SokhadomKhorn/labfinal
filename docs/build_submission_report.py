@@ -227,7 +227,7 @@ def build_report():
         "are publicly maintained and version-controlled at:\n"
         "https://github.com/SokhadomKhorn/labfinal"
     )
-    add_image_box("github_repo.png", "Figure 8.1: GitHub repository page in Chrome (https://github.com/SokhadomKhorn/labfinal)", 4.6)
+    add_image_box("github_repo.png", "Figure 8.1: GitHub repository folders and files (https://github.com/SokhadomKhorn/labfinal)", 4.2)
 
     docx_path = os.path.join(base_dir, 'docs', 'Khorn_Sokhadom_Lab_Final_Submission.docx')
     pdf_path_1 = os.path.join(base_dir, 'docs', 'Khorn_Sokhadom_Lab_Final_Submission.pdf')
