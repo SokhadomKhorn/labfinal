@@ -93,7 +93,7 @@ def build_report():
         run.font.size = Pt(9.5)
         run.font.color.rgb = GRAY
 
-    def add_image_box(filename, caption_text, max_height_in=3.6):
+    def add_image_box(filename, caption_text, max_height_in=3.6, ppi=125.0):
         img_path = os.path.join(shots_dir, filename)
         if not os.path.exists(img_path):
             print(f"Warning: Image file not found: {img_path}")
@@ -103,7 +103,7 @@ def build_report():
             w, h = im.size
             aspect = w / h
 
-        avail_width = 7.3  # inches
+        avail_width = min(7.3, w / ppi)  # inches; keep text at a readable ~125 px/in
         calc_height = avail_width / aspect
 
         if calc_height > max_height_in:
@@ -149,22 +149,26 @@ def build_report():
     add_description("Starting the local Kubernetes single-node cluster using the Docker Desktop driver and launching the Minikube Web Dashboard.")
     add_image_box("term_minikube_start.png", "Figure 1.1: Windows PowerShell - minikube start --driver=docker showing successful cluster startup", 2.6)
     add_image_box("term_minikube_dashboard.png", "Figure 1.2: Windows PowerShell - minikube dashboard --url launching the dashboard proxy", 1.6)
-    add_image_box("dashboard_pods.png", "Figure 1.3: Minikube Web Dashboard (Chrome) - Workloads > Pods showing gateway-registration-pod and update-pod Running", 4.0)
+    add_image_box("dashboard_pods_part1.png", "Figure 1.3: Minikube Web Dashboard (Chrome) - Workloads > Pods showing gateway-registration-pod and update-pod Running - Part 1/2: dashboard URL and navigation", 4.6)
+    add_image_box("dashboard_pods_part2.png", "Figure 1.3 (continued) - Part 2/2: Pods table", 4.6)
 
     # ==========================================
     # Activity 2: Pod Deployment YAML & Dockerfiles
     # ==========================================
     add_section_header("Activity 2: Pod Deployment YAML & Dockerfiles")
     add_description("Multi-container Pod 1 (API Gateway + Registration Service) and Pod 2 (Update Service) with secret injection for MongoDB Atlas.")
-    add_image_box("Screenshot 2026-11-12 182811.png", "Figure 2.1: k8s/pods.yaml - Pod 1: API Gateway (8080) + Registration (5001); Pod 2: Update (5002)", 3.8)
-    add_image_box("dockerfiles_all.png", "Figure 2.2: Windows PowerShell - contents of the three Dockerfiles (API Gateway, Registration Service, Update Service)", 4.6)
+    add_image_box("pods_yaml_part1.png", "Figure 2.1: k8s/pods.yaml - Pod 1: API Gateway (8080) + Registration (5001); Pod 2: Update (5002) - Part 1/2: Pod 1 - gateway-registration-pod (lines 1-38)", 7.0, ppi=80.0)
+    add_image_box("pods_yaml_part2.png", "Figure 2.1 (continued) - Part 2/2: Pod 2 - update-pod (lines 39-63)", 7.0, ppi=80.0)
+    add_image_box("dockerfiles_part1.png", "Figure 2.2: Windows PowerShell - contents of the three Dockerfiles (API Gateway, Registration Service, Update Service) - Part 1/3: api-gateway/Dockerfile", 4.6)
+    add_image_box("dockerfiles_part2.png", "Figure 2.2 (continued) - Part 2/3: registration-service/Dockerfile", 4.6)
+    add_image_box("dockerfiles_part3.png", "Figure 2.2 (continued) - Part 3/3: update-service/Dockerfile", 4.6)
 
     # ==========================================
     # Activity 3: Service YAML
     # ==========================================
     add_section_header("Activity 3: Kubernetes Service Definitions (NodePort & ClusterIP)")
     add_description("Service YAML exposing student-gateway-service externally via NodePort 30090 and update-service internally via ClusterIP 5002.")
-    add_image_box("Screenshot 2026-11-12 182901.png", "Figure 3.1: k8s/services.yaml - student-gateway-service (NodePort: 30090) and update-service (ClusterIP: 5002)", 3.0)
+    add_image_box("Screenshot 2026-11-12 182901.png", "Figure 3.1: k8s/services.yaml - student-gateway-service (NodePort: 30090) and update-service (ClusterIP: 5002)", 7.0, ppi=80.0)
 
     # ==========================================
     # Activity 4: Check Pods and Services
@@ -173,7 +177,8 @@ def build_report():
     add_description("Verifying active pods and services status via kubectl and the Minikube Dashboard.")
     add_image_box("term_kubectl_pods.png", "Figure 4.1: Windows PowerShell - kubectl get pods -o wide showing 2/2 containers running in Pod 1 and 1/1 in Pod 2", 1.3)
     add_image_box("term_kubectl_svc.png", "Figure 4.2: Windows PowerShell - kubectl get svc -o wide showing student-gateway-service (NodePort 30090) and update-service (ClusterIP)", 1.3)
-    add_image_box("dashboard_services.png", "Figure 4.3: Minikube Web Dashboard (Chrome) - Services view confirming the NodePort and ClusterIP services", 4.0)
+    add_image_box("dashboard_services_part1.png", "Figure 4.3: Minikube Web Dashboard (Chrome) - Services view confirming the NodePort and ClusterIP services - Part 1/2: dashboard URL and navigation", 4.6)
+    add_image_box("dashboard_services_part2.png", "Figure 4.3 (continued) - Part 2/2: Services table", 4.6)
 
     # ==========================================
     # Activity 5: Get API Gateway Service URL (NodePort - No Port Forwarding)
@@ -197,14 +202,22 @@ def build_report():
         "typed explicitly in the address bar (no {{base_url}} variable). Each figure is the full, uncropped Postman window showing the method, URL, "
         "request body, status code and the complete JSON response. Student_id 4 was created by the register request and used for the rest of the flow."
     )
-    add_image_box("postman_1_register.png", "Figure 6.1: Postman - POST http://127.0.0.1:64893/api/register returning 201 Created (Student_id 4)", 4.7)
-    add_image_box("postman_2_get_all.png", "Figure 6.2: Postman - GET http://127.0.0.1:64893/api/students returning 200 OK with all student records", 4.7)
-    add_image_box("postman_3_get_by_id.png", "Figure 6.3: Postman - GET http://127.0.0.1:64893/api/students/4 returning 200 OK for the registered student", 4.7)
-    add_image_box("postman_4_update_mobile.png", "Figure 6.4: Postman - PUT http://127.0.0.1:64893/api/update/mobile/4 returning 200 OK (Update Service)", 4.7)
-    add_image_box("postman_5_update_password.png", "Figure 6.5: Postman - PUT http://127.0.0.1:64893/api/update/password/4 returning 200 OK (password stored as bcrypt hash)", 4.7)
-    add_image_box("postman_6_update_both.png", "Figure 6.6: Postman - PATCH http://127.0.0.1:64893/api/update/4 returning 200 OK (mobile and password updated together)", 4.7)
-    add_image_box("postman_7_verify.png", "Figure 6.7: Postman - GET http://127.0.0.1:64893/api/students/4 verifying the persisted updates", 4.7)
-    add_image_box("postman_8_error_404.png", "Figure 6.8: Postman - PUT http://127.0.0.1:64893/api/update/mobile/99999 returning 404 Not Found (error handling)", 4.7)
+    add_image_box("postman_1_register_part1.png", "Figure 6.1: Postman - POST http://127.0.0.1:64893/api/register returning 201 Created (Student_id 4) - Part 1/2: request: method, URL and body", 4.6)
+    add_image_box("postman_1_register_part2.png", "Figure 6.1 (continued) - Part 2/2: response: status code and JSON body", 4.6)
+    add_image_box("postman_2_get_all_part1.png", "Figure 6.2: Postman - GET http://127.0.0.1:64893/api/students returning 200 OK with all student records - Part 1/2: request: method, URL and body", 4.6)
+    add_image_box("postman_2_get_all_part2.png", "Figure 6.2 (continued) - Part 2/2: response: status code and JSON body", 4.6)
+    add_image_box("postman_3_get_by_id_part1.png", "Figure 6.3: Postman - GET http://127.0.0.1:64893/api/students/4 returning 200 OK for the registered student - Part 1/2: request: method, URL and body", 4.6)
+    add_image_box("postman_3_get_by_id_part2.png", "Figure 6.3 (continued) - Part 2/2: response: status code and JSON body", 4.6)
+    add_image_box("postman_4_update_mobile_part1.png", "Figure 6.4: Postman - PUT http://127.0.0.1:64893/api/update/mobile/4 returning 200 OK (Update Service) - Part 1/2: request: method, URL and body", 4.6)
+    add_image_box("postman_4_update_mobile_part2.png", "Figure 6.4 (continued) - Part 2/2: response: status code and JSON body", 4.6)
+    add_image_box("postman_5_update_password_part1.png", "Figure 6.5: Postman - PUT http://127.0.0.1:64893/api/update/password/4 returning 200 OK (password stored as bcrypt hash) - Part 1/2: request: method, URL and body", 4.6)
+    add_image_box("postman_5_update_password_part2.png", "Figure 6.5 (continued) - Part 2/2: response: status code and JSON body", 4.6)
+    add_image_box("postman_6_update_both_part1.png", "Figure 6.6: Postman - PATCH http://127.0.0.1:64893/api/update/4 returning 200 OK (mobile and password updated together) - Part 1/2: request: method, URL and body", 4.6)
+    add_image_box("postman_6_update_both_part2.png", "Figure 6.6 (continued) - Part 2/2: response: status code and JSON body", 4.6)
+    add_image_box("postman_7_verify_part1.png", "Figure 6.7: Postman - GET http://127.0.0.1:64893/api/students/4 verifying the persisted updates - Part 1/2: request: method, URL and body", 4.6)
+    add_image_box("postman_7_verify_part2.png", "Figure 6.7 (continued) - Part 2/2: response: status code and JSON body", 4.6)
+    add_image_box("postman_8_error_404_part1.png", "Figure 6.8: Postman - PUT http://127.0.0.1:64893/api/update/mobile/99999 returning 404 Not Found (error handling) - Part 1/2: request: method, URL and body", 4.6)
+    add_image_box("postman_8_error_404_part2.png", "Figure 6.8 (continued) - Part 2/2: response: status code and JSON body", 4.6)
 
     # ==========================================
     # Activity 7: Cloud Database Verification
@@ -216,7 +229,8 @@ def build_report():
         "service, and shows the students collection (Student_id 4 with the updated mobile and bcrypt-hashed password) and the counters "
         "collection used for the Student_id sequence."
     )
-    add_image_box("mongo_students.png", "Figure 7.1: Windows PowerShell - live query of MongoDB Atlas: students collection (4 documents) and counters collection (seq: 4)", 6.2)
+    add_image_box("mongo_part1.png", "Figure 7.1: Windows PowerShell - live query of MongoDB Atlas: students collection (4 documents) and counters collection (seq: 4) - Part 1/2: command, connection and students 1-2", 4.6)
+    add_image_box("mongo_part2.png", "Figure 7.1 (continued) - Part 2/2: students 3-4 and counters collection", 4.6)
 
     # ==========================================
     # Activity 8: GitHub Repository
