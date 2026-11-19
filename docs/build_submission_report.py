@@ -7,7 +7,8 @@ Builds the updated, comprehensive Lab Final Report as both DOCX and PDF:
 Directly addresses all instructor feedback:
   1. High-DPI screenshots tightly cropped to only the essential, high-value content.
   2. Native NodePort service exposure (minikube service --url) - NO port-forwarding.
-  3. Explicit NodePort URLs (http://127.0.0.1:58390/...) in all Postman tests - NO hidden base_url variables.
+  3. Explicit NodePort URLs (http://127.0.0.1:64893/...) in all Postman tests - NO hidden base_url variables.
+  4. Every screenshot is a real, uncropped Windows window captured live (PowerShell console, Chrome, Postman).
 """
 
 import os
@@ -146,9 +147,9 @@ def build_report():
     # ==========================================
     add_section_header("Activity 1: Start Minikube Cluster and Web Dashboard")
     add_description("Starting the local Kubernetes single-node cluster using the Docker Desktop driver and launching the Minikube Web Dashboard.")
-    add_image_box("term_minikube_start.png", "Figure 1.1: Terminal output of minikube start --driver=docker showing successful cluster startup", 2.2)
-    add_image_box("term_minikube_dashboard.png", "Figure 1.2: Terminal execution of minikube dashboard enabling web proxy", 1.8)
-    add_image_box("crop_dashboard_pods.png", "Figure 1.3: Minikube Web Dashboard Workloads overview showing healthy cluster state and running pods", 2.8)
+    add_image_box("term_minikube_start.png", "Figure 1.1: Windows PowerShell - minikube start --driver=docker showing successful cluster startup", 2.6)
+    add_image_box("term_minikube_dashboard.png", "Figure 1.2: Windows PowerShell - minikube dashboard --url launching the dashboard proxy", 1.6)
+    add_image_box("dashboard_pods.png", "Figure 1.3: Minikube Web Dashboard (Chrome) - Workloads > Pods showing gateway-registration-pod and update-pod Running", 4.0)
 
     # ==========================================
     # Activity 2: Pod Deployment YAML & Dockerfiles
@@ -156,7 +157,7 @@ def build_report():
     add_section_header("Activity 2: Pod Deployment YAML & Dockerfiles")
     add_description("Multi-container Pod 1 (API Gateway + Registration Service) and Pod 2 (Update Service) with secret injection for MongoDB Atlas.")
     add_image_box("Screenshot 2026-11-12 182811.png", "Figure 2.1: k8s/pods.yaml - Pod 1: API Gateway (8080) + Registration (5001); Pod 2: Update (5002)", 3.8)
-    add_image_box("dockerfiles_all.png", "Figure 2.2: Production Dockerfiles for API Gateway, Registration Microservice, and Update Microservice", 1.8)
+    add_image_box("dockerfiles_all.png", "Figure 2.2: Windows PowerShell - contents of the three Dockerfiles (API Gateway, Registration Service, Update Service)", 4.6)
 
     # ==========================================
     # Activity 3: Service YAML
@@ -170,9 +171,9 @@ def build_report():
     # ==========================================
     add_section_header("Activity 4: Check Pods & Services in Kubernetes CLI and Dashboard")
     add_description("Verifying active pods and services status via kubectl and the Minikube Dashboard.")
-    add_image_box("term_kubectl_pods.png", "Figure 4.1: Terminal output of kubectl get pods -o wide showing 2/2 containers running in Pod 1 and 1/1 in Pod 2", 1.8)
-    add_image_box("term_kubectl_svc.png", "Figure 4.2: Terminal output of kubectl get svc -o wide showing student-gateway-service (NodePort 30090) and update-service (ClusterIP)", 1.8)
-    add_image_box("crop_dashboard_services.png", "Figure 4.3: Minikube Web Dashboard - Services view confirming active NodePort and ClusterIP endpoints", 2.8)
+    add_image_box("term_kubectl_pods.png", "Figure 4.1: Windows PowerShell - kubectl get pods -o wide showing 2/2 containers running in Pod 1 and 1/1 in Pod 2", 1.3)
+    add_image_box("term_kubectl_svc.png", "Figure 4.2: Windows PowerShell - kubectl get svc -o wide showing student-gateway-service (NodePort 30090) and update-service (ClusterIP)", 1.3)
+    add_image_box("dashboard_services.png", "Figure 4.3: Minikube Web Dashboard (Chrome) - Services view confirming the NodePort and ClusterIP services", 4.0)
 
     # ==========================================
     # Activity 5: Get API Gateway Service URL (NodePort - No Port Forwarding)
@@ -181,37 +182,41 @@ def build_report():
     add_description(
         "Crucial Note on Port Forwarding: No 'kubectl port-forward' is utilized. On Windows with Docker Desktop driver, "
         "the standard Minikube command 'minikube service student-gateway-service --url' resolves the Kubernetes NodePort (port 30090) "
-        "to http://127.0.0.1:58390. This serves as the direct external gateway for all Postman requests."
+        "to http://127.0.0.1:64893. This serves as the direct external gateway for all Postman requests."
     )
-    add_image_box("term_minikube_service_url.png", "Figure 5.1: Terminal execution of minikube service student-gateway-service --url returning http://127.0.0.1:58390", 1.8)
-    add_image_box("browser_routes.png", "Figure 5.2: Browser accessing http://127.0.0.1:58390/ through NodePort, displaying active microservice routes", 2.4)
-    add_image_box("browser_health.png", "Figure 5.3: Browser accessing http://127.0.0.1:58390/health confirming API Gateway status UP", 1.8)
-    add_image_box("postman_vars.png", "Figure 5.4: Postman Collection Variables configuring base_url to the active Minikube NodePort service URL", 1.9)
+    add_image_box("term_minikube_service_url.png", "Figure 5.1: Windows PowerShell - minikube service student-gateway-service --url returning http://127.0.0.1:64893", 1.4)
+    add_image_box("browser_routes.png", "Figure 5.2: Chrome accessing http://127.0.0.1:64893/ through the NodePort service, displaying active microservice routes", 3.2)
+    add_image_box("browser_health.png", "Figure 5.3: Chrome accessing http://127.0.0.1:64893/health confirming API Gateway status UP", 1.8)
 
     # ==========================================
     # Activity 6: Postman API Testing (Explicit URLs)
     # ==========================================
     add_section_header("Activity 6: Access APIs through Postman (Explicit NodePort URLs)")
     add_description(
-        "Crucial Note on base_url: Every Postman request below displays the exact resolved NodePort URL (http://127.0.0.1:58390/...) "
-        "in the address bar, tightly cropped to show the method, endpoint, request body, and response status/data in maximum clarity."
+        "Crucial Note on base_url: Every Postman request below was sent live with the exact resolved NodePort URL (http://127.0.0.1:64893/...) "
+        "typed explicitly in the address bar (no {{base_url}} variable). Each figure is the full, uncropped Postman window showing the method, URL, "
+        "request body, status code and the complete JSON response. Student_id 4 was created by the register request and used for the rest of the flow."
     )
-    add_image_box("crop_postman_1_register.png", "Figure 6.1: Postman - POST http://127.0.0.1:58390/api/register returning 201 Created (saves Student_id)", 3.4)
-    add_image_box("crop_postman_2_get_all.png", "Figure 6.2: Postman - GET http://127.0.0.1:58390/api/students returning 200 OK with all student records", 3.4)
-    add_image_box("crop_postman_3_get_by_id.png", "Figure 6.3: Postman - GET http://127.0.0.1:58390/api/students/1 returning 200 OK for registered student", 3.4)
-    add_image_box("crop_postman_4_update_mobile.png", "Figure 6.4: Postman - PUT http://127.0.0.1:58390/api/update/mobile/1 returning 200 OK (Update Service)", 3.4)
-    add_image_box("crop_postman_5_update_password.png", "Figure 6.5: Postman - PUT http://127.0.0.1:58390/api/update/password/1 returning 200 OK with new hashed password", 3.4)
-    add_image_box("crop_postman_6_update_both.png", "Figure 6.6: Postman - PATCH http://127.0.0.1:58390/api/update/1 returning 200 OK (atomic dual field update)", 3.4)
-    add_image_box("crop_postman_7_verify.png", "Figure 6.7: Postman - GET http://127.0.0.1:58390/api/students/1 verifying persisted updates in MongoDB", 3.4)
-    add_image_box("crop_postman_8_error_404.png", "Figure 6.8: Postman - PUT http://127.0.0.1:58390/api/update/mobile/999 returning 404 Not Found (Error Handling)", 3.2)
+    add_image_box("postman_1_register.png", "Figure 6.1: Postman - POST http://127.0.0.1:64893/api/register returning 201 Created (Student_id 4)", 4.7)
+    add_image_box("postman_2_get_all.png", "Figure 6.2: Postman - GET http://127.0.0.1:64893/api/students returning 200 OK with all student records", 4.7)
+    add_image_box("postman_3_get_by_id.png", "Figure 6.3: Postman - GET http://127.0.0.1:64893/api/students/4 returning 200 OK for the registered student", 4.7)
+    add_image_box("postman_4_update_mobile.png", "Figure 6.4: Postman - PUT http://127.0.0.1:64893/api/update/mobile/4 returning 200 OK (Update Service)", 4.7)
+    add_image_box("postman_5_update_password.png", "Figure 6.5: Postman - PUT http://127.0.0.1:64893/api/update/password/4 returning 200 OK (password stored as bcrypt hash)", 4.7)
+    add_image_box("postman_6_update_both.png", "Figure 6.6: Postman - PATCH http://127.0.0.1:64893/api/update/4 returning 200 OK (mobile and password updated together)", 4.7)
+    add_image_box("postman_7_verify.png", "Figure 6.7: Postman - GET http://127.0.0.1:64893/api/students/4 verifying the persisted updates", 4.7)
+    add_image_box("postman_8_error_404.png", "Figure 6.8: Postman - PUT http://127.0.0.1:64893/api/update/mobile/99999 returning 404 Not Found (error handling)", 4.7)
 
     # ==========================================
     # Activity 7: Cloud Database Verification
     # ==========================================
     add_section_header("Activity 7: Cloud Database Verification (MongoDB Atlas)")
-    add_description("Verifying inserted and updated records inside MongoDB Atlas cloud database (student_management).")
-    add_image_box("mongo_students.png", "Figure 7.1: MongoDB Atlas Data Explorer - student_management.students collection showing student record with bcrypt password", 2.6)
-    add_image_box("mongo_counters.png", "Figure 7.2: MongoDB Atlas Data Explorer - student_management.counters collection tracking Student_id sequence", 2.0)
+    add_description(
+        "The records were read live from the MongoDB Atlas cluster (database student_management) by running a small Node.js script "
+        "(scripts/show-db.js) inside the running registration-service container with kubectl exec. It uses the same MONGODB_URI secret as the "
+        "service, and shows the students collection (Student_id 4 with the updated mobile and bcrypt-hashed password) and the counters "
+        "collection used for the Student_id sequence."
+    )
+    add_image_box("mongo_students.png", "Figure 7.1: Windows PowerShell - live query of MongoDB Atlas: students collection (4 documents) and counters collection (seq: 4)", 6.2)
 
     # ==========================================
     # Activity 8: GitHub Repository
@@ -222,7 +227,7 @@ def build_report():
         "are publicly maintained and version-controlled at:\n"
         "https://github.com/SokhadomKhorn/labfinal"
     )
-    add_image_box("github_repo.png", "Figure 8.1: GitHub Repository structure and component architecture (https://github.com/SokhadomKhorn/labfinal)", 3.2)
+    add_image_box("github_repo.png", "Figure 8.1: GitHub repository page in Chrome (https://github.com/SokhadomKhorn/labfinal)", 4.6)
 
     docx_path = os.path.join(base_dir, 'docs', 'Khorn_Sokhadom_Lab_Final_Submission.docx')
     pdf_path_1 = os.path.join(base_dir, 'docs', 'Khorn_Sokhadom_Lab_Final_Submission.pdf')
