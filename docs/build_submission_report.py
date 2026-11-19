@@ -5,7 +5,7 @@ Builds the updated, comprehensive Lab Final Report as both DOCX and PDF:
   - docs/Khorn_Sokhadom_Lab_Final.pdf
 
 Directly addresses all instructor feedback:
-  1. Full-width, high-DPI screenshots with crisp visibility across all devices/viewers.
+  1. High-DPI screenshots tightly cropped to only the essential, high-value content.
   2. Native NodePort service exposure (minikube service --url) - NO port-forwarding.
   3. Explicit NodePort URLs (http://127.0.0.1:58390/...) in all Postman tests - NO hidden base_url variables.
 """
@@ -16,9 +16,6 @@ from PIL import Image
 import docx
 from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.enum.table import WD_TABLE_ALIGNMENT
-from docx.oxml import parse_xml
-from docx.oxml.ns import nsdecls
 import win32com.client
 
 
@@ -46,7 +43,6 @@ def build_report():
     BLUE = RGBColor(0x0F, 0x4C, 0x81)
     DARK = RGBColor(0x22, 0x22, 0x22)
     GRAY = RGBColor(0x55, 0x55, 0x55)
-    GREEN = RGBColor(0x13, 0x73, 0x33)
 
     # ------------------ Header ------------------
     title_p = doc.add_paragraph()
@@ -142,7 +138,7 @@ def build_report():
         " • Pod 1 (gateway-registration-pod): Hosts API Gateway (:8080) and Registration Service (:5001), communicating over localhost.\n"
         " • Pod 2 (update-pod): Hosts Update Service (:5002), exposed internally via a Kubernetes ClusterIP service.\n"
         " • Entry Point: student-gateway-service exposed externally via Kubernetes NodePort (port 30090). All Postman calls route through this gateway.\n"
-        " • Database: MongoDB Atlas cloud cluster (collection: students, sequence tracker: counters)."
+        " • Database: MongoDB Atlas cloud cluster (database: student_management, collection: students, sequence tracker: counters)."
     )
 
     # ==========================================
@@ -152,7 +148,7 @@ def build_report():
     add_description("Starting the local Kubernetes single-node cluster using the Docker Desktop driver and launching the Minikube Web Dashboard.")
     add_image_box("term_minikube_start.png", "Figure 1.1: Terminal output of minikube start --driver=docker showing successful cluster startup", 2.2)
     add_image_box("term_minikube_dashboard.png", "Figure 1.2: Terminal execution of minikube dashboard enabling web proxy", 1.8)
-    add_image_box("dashboard_pods.png", "Figure 1.3: Minikube Web Dashboard Workloads overview showing healthy cluster state and running pods", 3.0)
+    add_image_box("crop_dashboard_pods.png", "Figure 1.3: Minikube Web Dashboard Workloads overview showing healthy cluster state and running pods", 2.8)
 
     # ==========================================
     # Activity 2: Pod Deployment YAML & Dockerfiles
@@ -176,7 +172,7 @@ def build_report():
     add_description("Verifying active pods and services status via kubectl and the Minikube Dashboard.")
     add_image_box("term_kubectl_pods.png", "Figure 4.1: Terminal output of kubectl get pods -o wide showing 2/2 containers running in Pod 1 and 1/1 in Pod 2", 1.8)
     add_image_box("term_kubectl_svc.png", "Figure 4.2: Terminal output of kubectl get svc -o wide showing student-gateway-service (NodePort 30090) and update-service (ClusterIP)", 1.8)
-    add_image_box("dashboard_services.png", "Figure 4.3: Minikube Web Dashboard - Services view confirming active NodePort and ClusterIP endpoints", 3.0)
+    add_image_box("crop_dashboard_services.png", "Figure 4.3: Minikube Web Dashboard - Services view confirming active NodePort and ClusterIP endpoints", 2.8)
 
     # ==========================================
     # Activity 5: Get API Gateway Service URL (NodePort - No Port Forwarding)
@@ -198,16 +194,16 @@ def build_report():
     add_section_header("Activity 6: Access APIs through Postman (Explicit NodePort URLs)")
     add_description(
         "Crucial Note on base_url: Every Postman request below displays the exact resolved NodePort URL (http://127.0.0.1:58390/...) "
-        "in the address bar, ensuring complete transparency of the endpoint, HTTP method, and response status."
+        "in the address bar, tightly cropped to show the method, endpoint, request body, and response status/data in maximum clarity."
     )
-    add_image_box("postman_1_register.png", "Figure 6.1: Postman - POST http://127.0.0.1:58390/api/register returning 201 Created (saves Student_id)", 3.4)
-    add_image_box("postman_2_get_all.png", "Figure 6.2: Postman - GET http://127.0.0.1:58390/api/students returning 200 OK with all student records", 3.4)
-    add_image_box("postman_3_get_by_id.png", "Figure 6.3: Postman - GET http://127.0.0.1:58390/api/students/1 returning 200 OK for registered student", 3.4)
-    add_image_box("postman_4_update_mobile.png", "Figure 6.4: Postman - PUT http://127.0.0.1:58390/api/update/mobile/1 returning 200 OK (Update Service)", 3.4)
-    add_image_box("postman_5_update_password.png", "Figure 6.5: Postman - PUT http://127.0.0.1:58390/api/update/password/1 returning 200 OK with new hashed password", 3.4)
-    add_image_box("postman_6_update_both.png", "Figure 6.6: Postman - PATCH http://127.0.0.1:58390/api/update/1 returning 200 OK (atomic dual field update)", 3.4)
-    add_image_box("postman_7_verify.png", "Figure 6.7: Postman - GET http://127.0.0.1:58390/api/students/1 verifying persisted updates in MongoDB", 3.4)
-    add_image_box("postman_8_error_404.png", "Figure 6.8: Postman - PUT http://127.0.0.1:58390/api/update/mobile/999 returning 404 Not Found (Error Handling)", 3.2)
+    add_image_box("crop_postman_1_register.png", "Figure 6.1: Postman - POST http://127.0.0.1:58390/api/register returning 201 Created (saves Student_id)", 3.4)
+    add_image_box("crop_postman_2_get_all.png", "Figure 6.2: Postman - GET http://127.0.0.1:58390/api/students returning 200 OK with all student records", 3.4)
+    add_image_box("crop_postman_3_get_by_id.png", "Figure 6.3: Postman - GET http://127.0.0.1:58390/api/students/1 returning 200 OK for registered student", 3.4)
+    add_image_box("crop_postman_4_update_mobile.png", "Figure 6.4: Postman - PUT http://127.0.0.1:58390/api/update/mobile/1 returning 200 OK (Update Service)", 3.4)
+    add_image_box("crop_postman_5_update_password.png", "Figure 6.5: Postman - PUT http://127.0.0.1:58390/api/update/password/1 returning 200 OK with new hashed password", 3.4)
+    add_image_box("crop_postman_6_update_both.png", "Figure 6.6: Postman - PATCH http://127.0.0.1:58390/api/update/1 returning 200 OK (atomic dual field update)", 3.4)
+    add_image_box("crop_postman_7_verify.png", "Figure 6.7: Postman - GET http://127.0.0.1:58390/api/students/1 verifying persisted updates in MongoDB", 3.4)
+    add_image_box("crop_postman_8_error_404.png", "Figure 6.8: Postman - PUT http://127.0.0.1:58390/api/update/mobile/999 returning 404 Not Found (Error Handling)", 3.2)
 
     # ==========================================
     # Activity 7: Cloud Database Verification
