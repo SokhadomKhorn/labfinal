@@ -1,11 +1,11 @@
 {
   "info": {
     "name": "Student Management System - Khorn Sokhadom",
-    "description": "All requests go through the API Gateway (Kubernetes NodePort service `student-gateway-service`).\n\nBefore running: `kubectl port-forward service/student-gateway-service 9090:8080` (or set `base_url` to the URL printed by `minikube service student-gateway-service --url`).\n\nRun the requests top to bottom: Register saves the new Student_id into the `student_id` variable, and the Update requests use it.",
+    "description": "All requests go through the API Gateway (Kubernetes NodePort service `student-gateway-service`).\n\nBefore running: Run `minikube service student-gateway-service --url` to obtain the external NodePort URL (e.g. `http://127.0.0.1:58390`), and set `base_url` accordingly (no port forwarding required).\n\nRun the requests top to bottom: Register saves the new Student_id into the `student_id` variable, and the Update requests use it.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "base_url", "value": "http://localhost:9090" },
+    { "key": "base_url", "value": "http://127.0.0.1:58390" },
     { "key": "student_id", "value": "1" }
   ],
   "item": [

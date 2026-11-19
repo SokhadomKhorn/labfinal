@@ -73,12 +73,13 @@ kubectl get pods
 kubectl get services
 ```
 
-4. Open the gateway for Postman:
+4. Access the API Gateway via Kubernetes NodePort (no port forwarding):
 ```powershell
-kubectl port-forward service/student-gateway-service 9090:8080
+minikube service student-gateway-service --url
 ```
+This prints the active external URL routed directly to the `student-gateway-service` NodePort (port 30090), e.g. `http://127.0.0.1:58390`.
 
-5. Import `postman/Student_Management_System.postman_collection.json` into Postman and run the requests top to bottom. **Register Student** saves the new `Student_id`, and the **Update** requests use it.
+5. Import `postman/Student_Management_System.postman_collection.json` into Postman. Set the `base_url` variable to your Minikube service URL (or test directly with `http://127.0.0.1:58390`). Run the requests top to bottom: **Register Student** automatically saves the generated `Student_id`, and subsequent **Update** requests utilize it.
 
 ## Run locally without Kubernetes
 
